@@ -3,12 +3,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import twilio from "twilio";
 import OpenAI from "openai";
-console.log("✅ Loaded keys:", {
-  TWILIO_SID: process.env.TWILIO_SID ? "✔️ found" : "❌ missing",
-  TWILIO_AUTH: process.env.TWILIO_AUTH ? "✔️ found" : "❌ missing",
-  OPENAI_KEY: process.env.OPENAI_KEY ? "✔️ found" : "❌ missing"
-});
-
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -55,5 +49,4 @@ app.post("/voice", async (req, res) => {
   res.type("text/xml").send(twiml.toString());
 });
 
-app.listen(3000, () => console.log("✅ AI Voice Bot running on port 3000"))
-
+app.listen(3000, () => console.log("✅ AI Voice Bot running on port 3000"));
