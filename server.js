@@ -3,6 +3,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import twilio from "twilio";
 import OpenAI from "openai";
+import res from "express/lib/response";
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -10,11 +11,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const { TWILIO_SID, TWILIO_AUTH, OPENAI_KEY } = process.env;
 const client = twilio(TWILIO_SID, TWILIO_AUTH);
 const openai = new OpenAI({ apiKey: OPENAI_KEY });
-
+app.get("/voice", async (req, res)  => {
+  res.end ("hello world")
+})
 app.post("/voice", async (req, res) => {
   const userSpeech = req.body.SpeechResult || "";
   let responseText;
-
+let hello = responseText
   const systemPrompt = `
     You are Mia, a friendly and natural-sounding restaurant assistant.
     Restaurant: Golden Spoon Grill.
