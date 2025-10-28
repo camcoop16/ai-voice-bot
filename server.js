@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 const { TWILIO_SID, TWILIO_AUTH, OPENAI_KEY } = process.env;
 const client = twilio(TWILIO_SID, TWILIO_AUTH);
 const openai = new OpenAI({ apiKey: OPENAI_KEY });
-app.get("/voice", async (req, res)  => {
+app.get("/", async (req, res)  => {
   res.end ("hello world")
 })
 app.post("/voice", async (req, res) => {
