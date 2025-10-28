@@ -3,7 +3,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import twilio from "twilio";
 import OpenAI from "openai";
-import res from "express/lib/response";
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
