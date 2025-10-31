@@ -60,7 +60,7 @@ app.post('/process', async (req, res) => {
 
     // Convert AI text to ElevenLabs voice
     const audioResponse = await axios.post(
-      "https://api.elevenlabs.io/v1/text-to-speech/bUTE2M5LdnqaUCd5tJB3",
+      "https://api.elevenlabs.io/v1/text-to-speech/"kdmDKE6EkgrWrrykO9Qt,
       { text: aiResponse, voice_settings: { stability: 0.4, similarity_boost: 0.8 } },
       {
         headers: {
