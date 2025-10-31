@@ -64,7 +64,7 @@ app.post('/process', async (req, res) => {
       { text: aiResponse, voice_settings: { stability: 0.4, similarity_boost: 0.8 } },
       {
         headers: {
-          "xi-api-key": process.env.ELEVENLABS_API_KEY,
+          "xi-api-key": ELEVEN_KEY,
           "Content-Type": "application/json",
         },
         responseType: "arraybuffer",
