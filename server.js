@@ -10,6 +10,12 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+// ✅ Load ElevenLabs API key
+const ELEVEN_KEY = process.env.ELEVENLABS_API_KEY;
+
+// Optional: simple log to confirm it's being read correctly
+console.log("ElevenLabs Key:", ELEVEN_KEY ? "✅ Loaded" : "❌ Missing");
+
 // Initialize OpenAI
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
