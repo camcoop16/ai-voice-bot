@@ -1,54 +1,57 @@
-import "dotenv/config";
-import express from "express";
-import bodyParser from "body-parser";
-import twilio from "twilio";
-import OpenAI from "openai";
+require('dotenv').config();
+const express = require('express');
+const { twiml: { VoiceResponse } } = require('twilio');
+const OpenAI = require('openai');
 
 const app = express();
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 
-const { TWILIO_SID, TWILIO_AUTH, OPENAI_KEY } = process.env;
-const client = twilio(TWILIO_SID, TWILIO_AUTH);
-const openai = new OpenAI({ apiKey: OPENAI_KEY });
-app.get("/", async (req, res)  => {
-  res.end ("hello world")
-})
-app.post("/voice", async (req, res) => {
-  const userSpeech = req.body.SpeechResult || "";
-  let responseText;
-let hello = responseText
-  const systemPrompt = `
-    You are Mia, a friendly and natural-sounding restaurant assistant.
-    Restaurant: Golden Spoon Grill.
-    Menu: Burger $10, Fries $4, Salad $8, Chicken Sandwich $9.
-    Hours: 11am–9pm daily.
-    Address: 101 Main St, Tallahassee.
-    Be conversational and concise.
-  `;
-
-  if (!userSpeech) {
-    responseText = "Hey there! Welcome to Golden Spoon Grill. What can I get started for you today?";
-  } else {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userSpeech },
-      ],
-    });
-    responseText = completion.choices[0].message.content;
-  }
-
-  const twiml = new twilio.twiml.VoiceResponse();
-  const gather = twiml.gather({
-    input: "speech",
-    action: "/voice",
-    method: "POST",
-    speechTimeout: "auto",
-  });
-  gather.say({ voice: "Polly.Joanna-Neural" }, responseText);
-
-  res.type("text/xml").send(twiml.toString());
+// Initialize OpenAI
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
-app.listen(3000, () => console.log("✅ AI Voice Bot running on port 3000"));
+// When Twilio calls this route
+app.post('/voice', async (req, res) => {
+  const twiml = new VoiceResponse();
+  const gather = twiml.gather({
+    input: 'speech',
+    action: '/process',
+    method: 'POST',
+  });
+  gather.say('Hey there! Welcome to Cam’s AI voice assistant. What would you like to order today?');
+  res.type('text/xml');
+  res.send(twiml.toString());
+});
+
+// Process what the caller said
+app.post('/process', async (req, res) => {
+  const userSpeech = req.body.SpeechResult || "nothing heard";
+  console.log("User said:", userSpeech);
+
+  // Send caller’s speech to OpenAI for a response
+  const completion = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    messages: [
+      { role: "system", content: "You are a friendly restaurant AI who takes food orders clearly." },
+      { role: "user", content: userSpeech }
+    ],
+  });
+
+  const aiResponse = completion.choices[0].message.content;
+  console.log("AI says:", aiResponse);
+
+  // Send AI’s response back to Twilio
+  const twiml = new VoiceResponse();
+  twiml.say(aiResponse);
+  res.type('text/xml');
+  res.send(twiml.toString());
+});
+
+app.get('/', (req, res) => {
+  res.send('🚀 AI Voice Bot is live and connected to Twilio & OpenAI!');
+});
+
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server running on port ${process.env.PORT || 3000}`);
+});
