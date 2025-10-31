@@ -10,10 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.13.1",
     "body-parser": "^2.2.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "openai": "^6.7.0",
-    "twilio": "^5.10.3"
+    "twilio": "^5.10.4"
   }
 }
